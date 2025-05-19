@@ -4,14 +4,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.43.134:8000/api';
+  static const String baseUrl = 'http://192.168.1.7:8000/api';
 
+  // جلب قائمة الحيوانات
   Future<List<dynamic>> getAnimals() async {
-    final response = await http.get(
-      Uri.parse('http://192.168.43.134:8000/api/animals'),
-    );
-    print('respons staut: ${response.statusCode}');
-    print('respons body: ${response.body}');
+    final response = await http.get(Uri.parse('$baseUrl/animals'));
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -19,49 +19,54 @@ class ApiService {
     }
   }
 
+  // إضافة حيوان جديد
   Future<void> addAnimal(Map<String, dynamic> animalData) async {
     final response = await http.post(
-      Uri.parse('http://192.168.43.134:8000/api/animal'),
+      Uri.parse('$baseUrl/animal'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(animalData),
     );
+
     if (response.statusCode != 201) {
       throw Exception('Failed to add animal');
     }
   }
 
-  Future<List<dynamic>> getproduct() async {
-    final response = await http.get(
-      Uri.parse('http://192.168.43.134:8000/api/product'),
-    );
-    print('re st ${response.statusCode}');
-    print('re bo ${response.body}');
+  // جلب المنتجات
+  Future<List<dynamic>> getProduct() async {
+    final response = await http.get(Uri.parse('$baseUrl/product'));
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('filddddddddd');
+      throw Exception('Failed to load products');
     }
   }
 
-  Future<List<dynamic>> getdoctor() async {
+  // جلب الأطباء البيطريين
+  Future<List<dynamic>> getDoctor() async {
     final response = await http.get(Uri.parse('$baseUrl/vet'));
-    print(response.statusCode);
+    print('Response status: ${response.statusCode}');
+
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception(
-        'fillld  doctor ---------------------------------------------------------------',
-      );
+      throw Exception('Failed to load doctors');
     }
   }
 
+  // دوال مهيأة للشراء (تحتاج تنفيذ)
   getCartItems() {}
 
   getCart() {}
 }
 
+// إضافة منتج إلى السلة
 Future<void> addToCart(int productId, int quantity) async {
-  final url = Uri.parse('http://192.168.43.134:8000/api/add-cart');
+  const baseUrl = 'http://192.168.43.134:8000/api';
+  final url = Uri.parse('$baseUrl/add-cart');
 
   try {
     final response = await http.post(
@@ -81,15 +86,16 @@ Future<void> addToCart(int productId, int quantity) async {
   }
 }
 
+// جلب محتويات السلة
 Future<List> cart() async {
-  final response = await http.get(
-    Uri.parse('http://192.168.43.134:8000/api/cart'),
-  );
+  const baseUrl = 'http://192.168.43.134:8000/api';
+  final response = await http.get(Uri.parse('$baseUrl/cart'));
+
   if (response.statusCode == 200) {
     print('Cart data: ${response.body}');
     List<dynamic> cartItems = jsonDecode(response.body);
 
-    // فك التغليف إذا كانت البيانات داخل مصفوفة إضافية
+    // إذا البيانات مغلفة بمصفوفة إضافية
     if (cartItems.isNotEmpty && cartItems[0] is List) {
       cartItems = cartItems[0];
     }

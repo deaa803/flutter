@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vetlink1/page-singup&in/login.dart';
 import 'package:vetlink1/store/main_page.dart';
-import 'package:vetlink1/theme/theme.dart';
+import 'package:vetlink1/serves/theme.dart';
+import 'package:vetlink1/serves/noti_serves.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // تهيئة الإشعارات مع timezone داخل NotificationService
+  await NotificationService().init();
 
   final prefs = await SharedPreferences.getInstance();
   final isDarkMode = prefs.getBool('isDarkMode') ?? false;

@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
 
 class HaveAccount extends StatelessWidget {
-  final Function? press;
+  final VoidCallback? press;
   const HaveAccount({super.key, required this.press});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        const Text(
-          "Don’t have an Account ? ",
-          style: TextStyle(color: Colors.black),
-        ),
-        GestureDetector(
-          onTap: press as void Function()?,
-          child: const Text(
-            "sign up",
-            style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            "ليس لديك حساب؟ ",
+            style: TextStyle(color: Colors.black, fontFamily: 'Cairo'),
           ),
-        ),
-      ],
+          GestureDetector(
+            onTap: press,
+            child: const Text(
+              "إنشاء حساب",
+              style: TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Cairo',
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

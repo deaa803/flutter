@@ -60,120 +60,132 @@ class _LoginState extends State<Login> {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
 
-        // تخزين بيانات المستخدم
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('username', data['user']['name']);
         await prefs.setString('useremail', data['user']['email']);
-        await prefs.setInt(
-          'userId',
-          data['user']['id'],
-        ); // تخزين id المستخدم فقط
+        await prefs.setInt('userId', data['user']['id']);
 
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder:
-                (context) => MainPage(
-                  onToggleTheme: () {}, // مؤقتاً فاضي
-                  isDarkMode: false,
-                ),
+                (context) => MainPage(onToggleTheme: () {}, isDarkMode: false),
           ),
         );
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Welcome ${data['user']['name']}")),
+          SnackBar(
+            content: Text(
+              "مرحباً ${data['user']['name']}",
+              style: TextStyle(fontFamily: 'Cairo'),
+            ),
+          ),
         );
       } else {
         var error = jsonDecode(response.body)['message'];
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error: $error")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("خطأ: $error", style: TextStyle(fontFamily: 'Cairo')),
+          ),
+        );
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
-      body: Form(
-        key: formstate,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Image.asset("assest/images/2.png", height: 250),
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: SizedBox(
-                  width: 340,
-                  child: TextFormField(
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                      prefixIcon: Icon(Icons.person),
-                      hintText: "User Email",
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Please enter your email";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4),
-                child: SizedBox(
-                  width: 340,
-                  child: TextFormField(
-                    controller: passwordController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                      prefixIcon: Icon(Icons.lock),
-                      hintText: "Password",
-                    ),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Please enter your password";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: 340,
-                child:
-                    isloading
-                        ? CircularProgressIndicator()
-                        : ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                          ),
-                          onPressed: login,
-                          child: Text(
-                            "Login",
-                            style: TextStyle(color: Colors.black),
-                          ),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "تسجيل الدخول",
+            style: TextStyle(fontFamily: 'Cairo'),
+          ),
+        ),
+        body: Form(
+          key: formstate,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Image.asset("assest/images/2.png", height: 250),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: SizedBox(
+                    width: 340,
+                    child: TextFormField(
+                      controller: emailController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
-              ),
-              SizedBox(height: 20),
-              HaveAccount(
-                press: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignUp()),
-                  );
-                },
-              ),
-            ],
+                        prefixIcon: Icon(Icons.person),
+                        hintText: "البريد الإلكتروني",
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "يرجى إدخال البريد الإلكتروني";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: SizedBox(
+                    width: 340,
+                    child: TextFormField(
+                      controller: passwordController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        ),
+                        prefixIcon: Icon(Icons.lock),
+                        hintText: "كلمة المرور",
+                      ),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "يرجى إدخال كلمة المرور";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: 340,
+                  child:
+                      isloading
+                          ? const CircularProgressIndicator()
+                          : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                            ),
+                            onPressed: login,
+                            child: const Text(
+                              "تسجيل الدخول",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Cairo',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                ),
+                const SizedBox(height: 20),
+                HaveAccount(
+                  press: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SignUp()),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

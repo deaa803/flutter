@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:vetlink1/store/DoctorDetails.dart';
 import 'package:vetlink1/store/api_service.dart';
 
 class Vet extends StatefulWidget {
@@ -22,7 +23,7 @@ class _DoctorState extends State<Vet> {
 
   Future<void> fetchdoctor() async {
     try {
-      final data = await apiService.getdoctor();
+      final data = await apiService.getDoctor();
       setState(() {
         doctors = data;
       });
@@ -46,6 +47,10 @@ class _DoctorState extends State<Vet> {
                     itemCount: doctors.length,
                     itemBuilder: (context, index) {
                       final doctor = doctors[index];
+                      final name = doctor['name'] ?? 'غير معروف';
+                      final specialty = doctor['specialty'] ?? 'غير محدد';
+                      final experience = doctor['experience'] ?? 0;
+
                       return Card(
                         color: Colors.lightBlue[100],
                         shape: RoundedRectangleBorder(
@@ -60,7 +65,7 @@ class _DoctorState extends State<Vet> {
                               child: CircleAvatar(
                                 radius: 45,
                                 backgroundImage: const AssetImage(
-                                  'assest/images/4.jpg',
+                                  'assets/images/4.jpg',
                                 ),
                               ),
                             ),
@@ -71,7 +76,7 @@ class _DoctorState extends State<Vet> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      doctor['name']!,
+                                      name,
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -80,7 +85,7 @@ class _DoctorState extends State<Vet> {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      doctor['specialty'],
+                                      specialty,
                                       style: const TextStyle(
                                         fontSize: 16,
                                         color: Colors.black54,
@@ -88,7 +93,7 @@ class _DoctorState extends State<Vet> {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      'Experience: ${doctor['experience']} years',
+                                      'خبرة: $experience سنوات',
                                       style: const TextStyle(
                                         fontSize: 14,
                                         color: Colors.black54,
@@ -96,7 +101,23 @@ class _DoctorState extends State<Vet> {
                                     ),
                                     const SizedBox(height: 10),
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => DoctorDetails(
+                                                  name: name,
+                                                  specialty: specialty,
+                                                  experience:
+                                                      int.tryParse(
+                                                        experience.toString(),
+                                                      ) ??
+                                                      0,
+                                                ),
+                                          ),
+                                        );
+                                      },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.green[400],
                                         foregroundColor: Colors.white,

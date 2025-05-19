@@ -22,6 +22,10 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  int selectedIndex = 0;
+  String username = "";
+  String useremail = "";
+
   @override
   void initState() {
     super.initState();
@@ -34,15 +38,13 @@ class _MainPageState extends State<MainPage> {
       username =
           prefs.getString('username') ??
           "مستخدم"; // جلب الاسم أو القيمة الافتراضية
-      useremail = prefs.getString('useramil') ?? "email";
+      useremail =
+          prefs.getString('useremail') ??
+          "email"; // صححت 'useramil' إلى 'useremail'
     });
   }
 
-  int selectedIndex = 0;
-  String username = "";
-  String useremail = "";
-
-  Widget _getbody() {
+  Widget _getBody() {
     switch (selectedIndex) {
       case 0:
         return Store();
@@ -53,35 +55,47 @@ class _MainPageState extends State<MainPage> {
       case 3:
         return My();
       default:
-        return Center(child: Text("page not found"));
+        return Center(child: Text("الصفحة غير موجودة"));
     }
   }
 
   Widget _buildDrawer() {
     return Drawer(
       child: ListView(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              borderRadius: const BorderRadius.only(
+                bottomRight: Radius.circular(20),
+                bottomLeft: Radius.circular(20),
+              ),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
-                  onBackgroundImageError: (exception, stackTrace) {
-                    exception;
-                  },
-                  radius: 30,
-                  backgroundImage: AssetImage(
-                    "assest/picture/user.png",
-                  ), // صورة المستخدم
+                  radius: 35,
+                  backgroundImage: AssetImage("assets/picture/user.png"),
+                  onBackgroundImageError: (_, __) {},
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 12),
                 Text(
                   username,
                   style: TextStyle(
                     color: Theme.of(context).textTheme.bodyMedium!.color,
-                    fontSize: 18,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Cairo', // لو ضفت الخط في المشروع
+                  ),
+                ),
+                Text(
+                  useremail,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    fontFamily: 'Cairo',
                   ),
                 ),
               ],
@@ -92,9 +106,15 @@ class _MainPageState extends State<MainPage> {
               Icons.home,
               color: Theme.of(context).colorScheme.secondary,
             ),
-            title: Text("الرئيسية"),
+            title: const Text(
+              "الرئيسية",
+              style: TextStyle(fontFamily: 'Cairo'),
+            ),
             onTap: () {
-              Navigator.pop(context); // يغلق الـ Drawer
+              Navigator.pop(context);
+              setState(() {
+                selectedIndex = 0;
+              });
             },
           ),
           ListTile(
@@ -102,25 +122,24 @@ class _MainPageState extends State<MainPage> {
               Icons.person,
               color: Theme.of(context).colorScheme.secondary,
             ),
-            title: Text("حسابي"),
+            title: const Text("حسابي", style: TextStyle(fontFamily: 'Cairo')),
             onTap: () {
+              Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return My();
-                  },
-                ),
+                MaterialPageRoute(builder: (context) => My()),
               );
             },
           ),
           ListTile(
-            leading: Icon(Icons.logout, color: Colors.red),
-            title: Text("تسجيل الخروج"),
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: const Text(
+              "تسجيل الخروج",
+              style: TextStyle(fontFamily: 'Cairo'),
+            ),
             onTap: () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               await prefs.clear();
-
               Navigator.pushReplacement(
                 // ignore: use_build_context_synchronously
                 context,
@@ -133,7 +152,10 @@ class _MainPageState extends State<MainPage> {
               Icons.dark_mode,
               color: Theme.of(context).colorScheme.secondary,
             ),
-            title: Text("الوضع الليلي"),
+            title: const Text(
+              "الوضع الليلي",
+              style: TextStyle(fontFamily: 'Cairo'),
+            ),
             value: widget.isDarkMode,
             onChanged: (val) {
               widget.onToggleTheme();
@@ -150,24 +172,31 @@ class _MainPageState extends State<MainPage> {
       drawer: _buildDrawer(),
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
+        centerTitle: true,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset("assest/picture/logo vetlink crop2.png", width: 50),
-            const Text(" vet", style: TextStyle(color: Colors.white)),
-            const Text("link", style: TextStyle(color: Colors.yellow)),
+            Image.asset("assets/picture/logo vetlink crop2.png", width: 50),
+            const Text(
+              " vet",
+              style: TextStyle(color: Colors.white, fontFamily: 'Cairo'),
+            ),
+            const Text(
+              "link",
+              style: TextStyle(color: Colors.yellow, fontFamily: 'Cairo'),
+            ),
           ],
         ),
       ),
-      body: _getbody(),
+      body: _getBody(),
       bottomNavigationBar: ConvexAppBar(
         style: TabStyle.react,
         initialActiveIndex: selectedIndex,
-        items: [
-          TabItem(icon: Icons.store, title: "store"),
-          TabItem(icon: Icons.person_search, title: "doctor"),
-          TabItem(icon: Icons.pets, title: "animal"),
-          TabItem(icon: Icons.person, title: "my"),
+        items: const [
+          TabItem(icon: Icons.store, title: "المتجر"),
+          TabItem(icon: Icons.person_search, title: "الأطباء"),
+          TabItem(icon: Icons.pets, title: "الحيوانات"),
+          TabItem(icon: Icons.person, title: "حسابي"),
         ],
         onTap: (index) {
           setState(() {
@@ -181,7 +210,7 @@ class _MainPageState extends State<MainPage> {
 
 // -------------------------------------------------------------------
 class Searchone extends SearchDelegate {
-  List<String> username = ["naser", "mhdi", "anas", "hamza", "amaar"];
+  final List<String> usernames = ["naser", "mhdi", "anas", "hamza", "amaar"];
   late List<String> filterlist;
 
   @override
@@ -209,11 +238,12 @@ class Searchone extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     filterlist =
-        username
+        usernames
             .where(
               (element) => element.toLowerCase().contains(query.toLowerCase()),
             )
             .toList();
+
     return ListView.builder(
       itemCount: filterlist.length,
       itemBuilder: (context, i) {
@@ -226,19 +256,20 @@ class Searchone extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     if (query.isEmpty) {
       return ListView.builder(
-        itemCount: username.length,
+        itemCount: usernames.length,
         itemBuilder: (context, i) {
-          return ListTile(title: Text(username[i]));
+          return ListTile(title: Text(usernames[i]));
         },
       );
     } else {
       filterlist =
-          username
+          usernames
               .where(
                 (element) =>
                     element.toLowerCase().contains(query.toLowerCase()),
               )
               .toList();
+
       return ListView.builder(
         itemCount: filterlist.length,
         itemBuilder: (context, i) {

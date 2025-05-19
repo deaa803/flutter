@@ -22,7 +22,7 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
-  int i = 1;
+  int quantity = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class _DetailsState extends State<Details> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assest/picture/logo vetlink crop2.png", width: 50),
+            Image.asset("assets/picture/logo vetlink crop2.png", width: 50),
             const Text(" vet", style: TextStyle(color: Colors.white)),
             const Text("link", style: TextStyle(color: Colors.yellow)),
           ],
@@ -47,12 +47,12 @@ class _DetailsState extends State<Details> {
           children: [
             Center(
               child: Image.asset(
-                "assest/picture/logo vetlink crop2.png",
+                "assets/picture/logo vetlink crop2.png",
                 width: 150,
                 height: 150,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               widget.name_product,
               style: TextStyle(
@@ -61,7 +61,7 @@ class _DetailsState extends State<Details> {
                 color: theme.colorScheme.secondary, // لون الاسم متوافق مع الثيم
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               widget.desc,
               style: TextStyle(
@@ -69,35 +69,35 @@ class _DetailsState extends State<Details> {
                 color: theme.textTheme.bodyMedium?.color,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
-              '\$${widget.price_product}',
+              '${widget.price_product} ل.س',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.secondary,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Quantity:', style: TextStyle(fontSize: 16)),
+                const Text('الكمية:', style: TextStyle(fontSize: 16)),
                 Row(
                   children: [
                     IconButton(
                       onPressed: () {
                         setState(() {
-                          if (i > 1) i--;
+                          if (quantity > 1) quantity--;
                         });
                       },
                       icon: Icon(Icons.remove, color: theme.iconTheme.color),
                     ),
-                    Text('$i', style: TextStyle(fontSize: 16)),
+                    Text('$quantity', style: const TextStyle(fontSize: 16)),
                     IconButton(
                       onPressed: () {
                         setState(() {
-                          i++;
+                          quantity++;
                         });
                       },
                       icon: Icon(Icons.add, color: theme.iconTheme.color),
@@ -106,29 +106,32 @@ class _DetailsState extends State<Details> {
                 ),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  addToCart(widget.id_product, i);
+                  addToCart(widget.id_product, quantity);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Product added to cart!')),
+                    const SnackBar(content: Text('تم إضافة المنتج إلى السلة')),
                   );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.secondary,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 50,
+                    vertical: 15,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: Text(
-                  'Add to Cart',
+                  'أضف إلى السلة',
                   style: TextStyle(fontSize: 18, color: theme.iconTheme.color),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               "منتجات مقترحة",
               style: TextStyle(
@@ -137,15 +140,16 @@ class _DetailsState extends State<Details> {
                 color: theme.colorScheme.secondary,
               ),
             ),
-            SizedBox(height: 10),
-            Expanded(
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 140,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _buildSuggestedProduct("assest/picture/1.png", "منتج 1"),
-                  _buildSuggestedProduct("assest/picture/1.png", "منتج 2"),
-                  _buildSuggestedProduct("assest/picture/1.png", "منتج 3"),
-                  _buildSuggestedProduct("assest/picture/1.png", "منتج 4"),
+                  _buildSuggestedProduct("assets/picture/1.png", "منتج 1"),
+                  _buildSuggestedProduct("assets/picture/1.png", "منتج 2"),
+                  _buildSuggestedProduct("assets/picture/1.png", "منتج 3"),
+                  _buildSuggestedProduct("assets/picture/1.png", "منتج 4"),
                 ],
               ),
             ),
@@ -159,11 +163,11 @@ class _DetailsState extends State<Details> {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         children: [
           Image.asset(imagePath, width: 100, height: 100),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             productName,
             style: TextStyle(fontSize: 14, color: theme.colorScheme.primary),

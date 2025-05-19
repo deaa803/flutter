@@ -13,7 +13,7 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   List cartItems = [];
-  bool isloding = true;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -26,16 +26,16 @@ class _CartState extends State<Cart> {
       final data = await cart();
       setState(() {
         cartItems = data;
-        isloding = false;
+        isLoading = false;
       });
     } catch (e) {
       print('Error fetching cart: $e');
       setState(() {
-        isloding = false;
+        isLoading = false;
       });
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Failed to load cart items')));
+      ).showSnackBar(const SnackBar(content: Text('فشل تحميل محتويات السلة')));
     }
   }
 
@@ -52,10 +52,19 @@ class _CartState extends State<Cart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Your Cart'), backgroundColor: Colors.yellow),
+      appBar: AppBar(
+        title: const Text(
+          'سلة مشترياتك',
+          style: TextStyle(fontFamily: 'Cairo'),
+        ),
+        backgroundColor: const Color(0xFFF4C430), // لون أصفر دافئ
+        elevation: 0,
+      ),
       body:
-          isloding
-              ? Center(child: SpinKitWave(color: Colors.yellow, size: 50.0))
+          isLoading
+              ? const Center(
+                child: SpinKitWave(color: Color(0xFFF4C430), size: 50.0),
+              )
               : Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -66,64 +75,96 @@ class _CartState extends State<Cart> {
                         itemBuilder: (context, index) {
                           final item = cartItems[index];
                           return Card(
-                            margin: EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            elevation: 3,
                             child: ListTile(
-                              leading: Image.asset(
-                                'assest/images/2.png',
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                  'assets/images/2.png',
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                              title: Text('${item['product']['name']}'),
+                              title: Text(
+                                '${item['product']['name']}',
+                                style: const TextStyle(
+                                  fontFamily: 'Cairo',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                               subtitle: Text(
-                                'Price: \$${item['product']['price']}',
+                                'السعر: ${item['product']['price']} ل.س',
+                                style: const TextStyle(fontFamily: 'Cairo'),
                               ),
-                              trailing: Text('x${item['quantity']}'),
+                              trailing: Text(
+                                'x${item['quantity']}',
+                                style: const TextStyle(
+                                  fontFamily: 'Cairo',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           );
                         },
                       ),
                     ),
+                    const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Total:',
+                        const Text(
+                          'الإجمالي:',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Cairo',
                           ),
                         ),
                         Text(
                           '${totalPrice.toStringAsFixed(2)} ل.س',
-                          style: TextStyle(
-                            fontSize: 18,
+                          style: const TextStyle(
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Cairo',
+                            color: Color(0xFFF4C430),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Purchase completed successfully'),
+                          const SnackBar(
+                            content: Text('تم إتمام عملية الشراء بنجاح'),
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.yellow,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 50,
-                          vertical: 15,
+                        backgroundColor: const Color(0xFFF4C430),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 60,
+                          vertical: 16,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      child: Text('Buy', style: TextStyle(fontSize: 18)),
+                      child: const Text(
+                        'شراء',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Cairo',
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ],
                 ),
