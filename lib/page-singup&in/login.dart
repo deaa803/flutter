@@ -107,7 +107,7 @@ class _LoginState extends State<Login> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Image.asset("assest/images/2.png", height: 250),
+                Image.asset("assets/images/2.png", height: 250),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: SizedBox(

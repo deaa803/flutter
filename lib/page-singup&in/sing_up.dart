@@ -122,7 +122,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Lottie.asset("assest/picture/5.json", height: 150),
+              Lottie.asset("assets/picture/5.json", height: 150),
               const SizedBox(height: 10),
               Card(
                 shape: RoundedRectangleBorder(
@@ -243,7 +243,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           const SizedBox(height: 20),
                           isLoading
                               ? Lottie.asset(
-                                "assest/picture/6.json",
+                                "assets/picture/6.json",
                                 height: 70,
                               )
                               : ElevatedButton(

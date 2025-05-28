@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vetlink1/store/profailinforow.dart';
 
 class My extends StatelessWidget {
-  const My({super.key});
+  final VoidCallback onLogout;
+
+  const My({super.key, required this.onLogout});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -15,11 +21,11 @@ class My extends StatelessWidget {
               Container(
                 height: 225,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/3.jpg'), // صححت المسار
+                  image: const DecorationImage(
+                    image: AssetImage('assets/images/3.jpg'),
                     fit: BoxFit.cover,
                   ),
-                  color: const Color.fromARGB(255, 254, 214, 129),
+                  color: colorScheme.primary.withOpacity(0.7),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30),
@@ -36,10 +42,10 @@ class My extends StatelessWidget {
                     image: const DecorationImage(
                       image: AssetImage(
                         "assets/picture/logo vetlink crop2.png",
-                      ), // صححت المسار
+                      ),
                       fit: BoxFit.cover,
                     ),
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
                         color: Colors.black38,
                         blurRadius: 10,
@@ -52,13 +58,12 @@ class My extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 80),
-          const Text(
+          Text(
             'ناصر',
-            style: TextStyle(
+            style: GoogleFonts.tajawal(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
-              fontFamily: 'Cairo', // لو ضفت الخط في المشروع
+              color: colorScheme.onBackground,
             ),
           ),
           const SizedBox(height: 5),
@@ -89,52 +94,52 @@ class My extends StatelessWidget {
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    // يمكنك إضافة وظيفة تعديل الملف الشخصي هنا
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 30,
                       vertical: 15,
                     ),
-                    backgroundColor: const Color.fromARGB(255, 254, 214, 129),
+                    backgroundColor: colorScheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                  ),
-                  child: const Text(
-                    'تعديل الملف الشخصي',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
+                    textStyle: GoogleFonts.tajawal(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      fontSize: 16,
                     ),
                   ),
+                  child: Text(
+                    'تعديل الملف الشخصي',
+                    style: TextStyle(color: colorScheme.onPrimary),
+                  ),
                 ),
+                const SizedBox(height: 20),
                 OutlinedButton(
-                  onPressed: () {},
+                  onPressed: onLogout,
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 30,
                       vertical: 15,
                     ),
-                    side: const BorderSide(
-                      color: Color.fromARGB(255, 254, 214, 129),
-                      width: 2,
-                    ),
+                    side: BorderSide(color: colorScheme.primary, width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                  ),
-                  child: const Text(
-                    'تسجيل الخروج',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      color: Color.fromARGB(255, 254, 214, 129),
+                    textStyle: GoogleFonts.tajawal(
                       fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
+                  ),
+                  child: Text(
+                    'تسجيل الخروج',
+                    style: TextStyle(color: colorScheme.primary),
                   ),
                 ),
               ],

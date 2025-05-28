@@ -1,6 +1,7 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously
+// ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:vetlink1/store/AnimalDetailsPage.dart';
 import 'package:vetlink1/store/show_dialogg.dart';
 import 'api_service.dart';
 import 'package:lottie/lottie.dart';
@@ -17,7 +18,7 @@ class _AnimalState extends State<Animal> {
   List animal = [];
 
   final String baseUrl =
-      'http://192.168.1.7:8000/storage/'; // رابط السيرفر لتخزين الصور
+      'http://192.168.43.134:8000/storage/'; // رابط السيرفر لتخزين الصور
 
   @override
   void initState() {
@@ -195,20 +196,18 @@ class _AnimalState extends State<Animal> {
       ),
       floatingActionButton: GestureDetector(
         onTap: () async {
-          final newAnimal = await Navigator.push(
+          await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const ShowDialogg()),
           );
 
-          if (newAnimal != null) {
-            await fetchAnimal();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("تمت إضافة الحيوان بنجاح!"),
-                backgroundColor: Colors.green,
-              ),
-            );
-          }
+          await fetchAnimal();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("تمت إضافة الحيوان بنجاح!"),
+              backgroundColor: Colors.green,
+            ),
+          );
         },
         child: Container(
           height: 60,
@@ -229,138 +228,6 @@ class _AnimalState extends State<Animal> {
             ],
           ),
           child: const Icon(Icons.add, color: Colors.white, size: 30),
-        ),
-      ),
-    );
-  }
-}
-
-class AnimalDetailsPage extends StatefulWidget {
-  final Map<String, dynamic> animal;
-
-  const AnimalDetailsPage({super.key, required this.animal});
-
-  @override
-  State<AnimalDetailsPage> createState() => _AnimalDetailsPageState();
-}
-
-class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
-  late Map<String, dynamic> animal;
-  DateTime? lastVisitDate;
-
-  @override
-  void initState() {
-    super.initState();
-    animal = widget.animal;
-    if (animal['last_vet_visit'] != null) {
-      lastVisitDate = DateTime.tryParse(animal['last_vet_visit']);
-    }
-  }
-
-  Future<void> saveVisitDate(DateTime date) async {
-    setState(() {
-      lastVisitDate = date;
-      animal['last_vet_visit'] = date.toIso8601String();
-    });
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('تم تحديث تاريخ آخر زيارة')));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String baseUrl = 'http://192.168.1.7:8000/storage/';
-    String imageUrl = baseUrl + (animal['image'] ?? '');
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('تفاصيل الحيوان')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child:
-                  animal['image'] != null && animal['image'] != ''
-                      ? Image.network(
-                        imageUrl,
-                        height: 200,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            height: 200,
-                            color: Colors.grey[300],
-                            child: const Icon(
-                              Icons.image_not_supported,
-                              size: 60,
-                            ),
-                          );
-                        },
-                      )
-                      : Image.asset(
-                        "assets/images/6.jpg",
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'الاسم: ${animal['name']}',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'العمر: ${animal['age']}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'نوع الحيوان: ${animal['animal_type']}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'تاريخ التسجيل: ${animal['date']}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 20),
-            if (lastVisitDate != null) ...[
-              Text(
-                'آخر زيارة للطبيب: ${lastVisitDate!.toLocal().toString().split(' ')[0]}',
-                style: const TextStyle(fontSize: 18, color: Colors.green),
-              ),
-              const SizedBox(height: 10),
-            ],
-            ElevatedButton.icon(
-              onPressed: () async {
-                final selectedDate = await showDatePicker(
-                  context: context,
-                  initialDate: lastVisitDate ?? DateTime.now(),
-                  firstDate: DateTime(2020),
-                  lastDate: DateTime.now(),
-                  locale: const Locale("ar", "SY"),
-                );
-
-                if (selectedDate != null) {
-                  await saveVisitDate(selectedDate);
-                }
-              },
-              icon: const Icon(Icons.date_range),
-              label: Text(
-                lastVisitDate == null
-                    ? 'حدد تاريخ آخر زيارة للطبيب'
-                    : 'تعديل تاريخ آخر زيارة للطبيب',
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );

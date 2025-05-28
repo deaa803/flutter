@@ -35,13 +35,18 @@ class _MainPageState extends State<MainPage> {
   Future<void> _loadUsername() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      username =
-          prefs.getString('username') ??
-          "مستخدم"; // جلب الاسم أو القيمة الافتراضية
-      useremail =
-          prefs.getString('useremail') ??
-          "email"; // صححت 'useramil' إلى 'useremail'
+      username = prefs.getString('username') ?? "مستخدم";
+      useremail = prefs.getString('useremail') ?? "email";
     });
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => Login()),
+    );
   }
 
   Widget _getBody() {
@@ -53,7 +58,8 @@ class _MainPageState extends State<MainPage> {
       case 2:
         return Animal();
       case 3:
-        return My();
+        // تمرير دالة تسجيل الخروج لصفحة My
+        return My(onLogout: () => _logout(context));
       default:
         return Center(child: Text("الصفحة غير موجودة"));
     }
@@ -87,7 +93,7 @@ class _MainPageState extends State<MainPage> {
                     color: Theme.of(context).textTheme.bodyMedium!.color,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Cairo', // لو ضفت الخط في المشروع
+                    fontFamily: 'Cairo',
                   ),
                 ),
                 Text(
@@ -127,7 +133,9 @@ class _MainPageState extends State<MainPage> {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => My()),
+                MaterialPageRoute(
+                  builder: (context) => My(onLogout: () => _logout(context)),
+                ),
               );
             },
           ),
@@ -138,13 +146,7 @@ class _MainPageState extends State<MainPage> {
               style: TextStyle(fontFamily: 'Cairo'),
             ),
             onTap: () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.clear();
-              Navigator.pushReplacement(
-                // ignore: use_build_context_synchronously
-                context,
-                MaterialPageRoute(builder: (context) => Login()),
-              );
+              await _logout(context);
             },
           ),
           SwitchListTile(
@@ -205,77 +207,5 @@ class _MainPageState extends State<MainPage> {
         },
       ),
     );
-  }
-}
-
-// -------------------------------------------------------------------
-class Searchone extends SearchDelegate {
-  final List<String> usernames = ["naser", "mhdi", "anas", "hamza", "amaar"];
-  late List<String> filterlist;
-
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-        onPressed: () {
-          query = "";
-        },
-        icon: const Icon(Icons.close),
-      ),
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        close(context, null);
-      },
-      icon: const Icon(Icons.arrow_back),
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    filterlist =
-        usernames
-            .where(
-              (element) => element.toLowerCase().contains(query.toLowerCase()),
-            )
-            .toList();
-
-    return ListView.builder(
-      itemCount: filterlist.length,
-      itemBuilder: (context, i) {
-        return ListTile(title: Text(filterlist[i]));
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    if (query.isEmpty) {
-      return ListView.builder(
-        itemCount: usernames.length,
-        itemBuilder: (context, i) {
-          return ListTile(title: Text(usernames[i]));
-        },
-      );
-    } else {
-      filterlist =
-          usernames
-              .where(
-                (element) =>
-                    element.toLowerCase().contains(query.toLowerCase()),
-              )
-              .toList();
-
-      return ListView.builder(
-        itemCount: filterlist.length,
-        itemBuilder: (context, i) {
-          return ListTile(title: Text(filterlist[i]));
-        },
-      );
-    }
   }
 }

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:vetlink1/store/api_service.dart';
+import 'package:vetlink1/colors.dart'; // استيراد ملف الألوان
 
 class Cart extends StatefulWidget {
   const Cart({super.key});
@@ -51,20 +52,21 @@ class _CartState extends State<Cart> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary; // لون رئيسي من الثيم
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'سلة مشترياتك',
           style: TextStyle(fontFamily: 'Cairo'),
         ),
-        backgroundColor: const Color(0xFFF4C430), // لون أصفر دافئ
+        backgroundColor: primaryColor,
         elevation: 0,
       ),
       body:
           isLoading
-              ? const Center(
-                child: SpinKitWave(color: Color(0xFFF4C430), size: 50.0),
-              )
+              ? Center(child: SpinKitWave(color: primaryColor, size: 50.0))
               : Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -127,11 +129,11 @@ class _CartState extends State<Cart> {
                         ),
                         Text(
                           '${totalPrice.toStringAsFixed(2)} ل.س',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Cairo',
-                            color: Color(0xFFF4C430),
+                            color: primaryColor,
                           ),
                         ),
                       ],
@@ -147,7 +149,7 @@ class _CartState extends State<Cart> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF4C430),
+                        backgroundColor: primaryColor,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 60,
                           vertical: 16,

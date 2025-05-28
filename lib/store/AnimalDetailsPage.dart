@@ -1,9 +1,9 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_build_context_synchronously
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:timezone/timezone.dart' as tz;
+// import 'package:timezone/timezone.dart' as tz;
 import 'package:vetlink1/serves/noti_serves.dart';
 
 class AnimalDetailsPage extends StatefulWidget {
@@ -30,7 +30,7 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
 
   Future<void> saveVisitDate(DateTime date) async {
     final url = Uri.parse(
-      'http://192.168.1.7:8000/api/animals/${animal['id']}',
+      'http://192.168.43.134:8000/api/animals/${animal['id']}',
     );
 
     final response = await http.put(
@@ -44,22 +44,23 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
         lastVisitDate = date;
         animal['last_vet_visit'] = date.toIso8601String();
       });
-      // جدولة الإشعار بعد أسبوعين من تاريخ الزيارة
-      final notifyDate = tz.TZDateTime.from(
-        date.add(const Duration(minutes: 3)),
-        tz.local,
-      );
-      await NotificationService().scheduleNotification(
-        id: animal['id'],
-        title: 'موعد زيارة الطبيب',
-        body: 'حان وقت أخذ ${animal['name']} إلى الطبيب البيطري.',
-        scheduledDate: notifyDate,
-      );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم حفظ التاريخ وجدولة التذكير بنجاح')),
-      );
-    } else {
+      // جدولة إشعار بعد دقيقتين للتجربة (أو أسبوعين بالحقيقي)
+      //   final notifyDate = tz.TZDateTime.from(
+      //     date.add(const Duration(seconds: 8)),
+      //     tz.local,
+      //   );
+      //   await NotificationService().scheduleNotification(
+      //     id: animal['id'],
+      //     title: 'موعد زيارة الطبيب',
+      //     body: 'حان وقت أخذ ${animal['name']} إلى الطبيب البيطري.',
+      //     scheduledDate: notifyDate,
+      //   );
+
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text('تم حفظ التاريخ وجدولة التذكير بنجاح')),
+      //   );
+      // } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('حدث خطأ أثناء حفظ التاريخ')),
       );
@@ -68,7 +69,7 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    String baseUrl = 'http://192.168.1.7:8000/storage/';
+    String baseUrl = 'http://192.168.43.134:8000/storage/';
     String imageUrl = baseUrl + (animal['image'] ?? '');
 
     return Scaffold(
@@ -121,37 +122,58 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
               ),
               const SizedBox(height: 10),
             ],
-            // Center(
-            //   child: Expanded(
-            //     child: ElevatedButton.icon(
-            //       onPressed: () async {
-            //         final selectedDate = await showDatePicker(
-            //           context: context,
-            //           initialDate: lastVisitDate ?? DateTime.now(),
-            //           firstDate: DateTime(2020),
-            //           lastDate: DateTime.now(),
-            //           locale: const Locale("ar", "SY"),
-            //         );
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  final selectedDate = await showDatePicker(
+                    context: context,
+                    initialDate: lastVisitDate ?? DateTime.now(),
+                    firstDate: DateTime(2020),
+                    lastDate: DateTime.now(),
+                    locale: const Locale("ar", "SY"),
+                  );
 
-            //         if (selectedDate != null) {
-            //           await saveVisitDate(selectedDate);
-            //         }
-            //       },
-            //       icon: const Icon(Icons.date_range),
-            //       label: Text(
-            //         lastVisitDate == null
-            //             ? 'حدد تاريخ آخر زيارة للطبيب'
-            //             : 'تعديل تاريخ آخر زيارة للطبيب',
-            //       ),
-            //       style: ElevatedButton.styleFrom(
-            //         padding: const EdgeInsets.symmetric(vertical: 15),
-            //         shape: RoundedRectangleBorder(
-            //           borderRadius: BorderRadius.circular(20),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
+                  if (selectedDate != null) {
+                    await saveVisitDate(selectedDate);
+                  }
+                },
+                icon: const Icon(Icons.date_range),
+                label: Text(
+                  lastVisitDate == null
+                      ? 'حدد تاريخ'
+                      : 'تعديل تاريخ آخر زيارة للطبيب',
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            /// ✅ زر لتجربة التذكير بعد دقيقتين مباشرة
+            ElevatedButton(
+              onPressed: () async {
+                NotiServes().shownotification(title: "title", body: "body");
+              },
+              child: const Text('تجربة التذكير بعد دقيقتين'),
+            ),
+
+            /// ✅ زر لتجربة التذكير بعد دقيقتين مباشرة
+            ElevatedButton(
+              onPressed: () async {
+                NotiServes().schedulenotification(
+                  title: "tiii",
+                  body: "حان الوقت لاخذ الحيوان",
+                  hour: 13,
+                  minute: 20,
+                );
+              },
+              child: const Text('تجربة التذكير بعد جدولة'),
+            ),
           ],
         ),
       ),

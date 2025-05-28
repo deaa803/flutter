@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ShowDialogg extends StatefulWidget {
@@ -59,10 +58,7 @@ class _ShowDialoggState extends State<ShowDialogg> {
       isLoading = true;
     });
 
-    final prefs = await SharedPreferences.getInstance();
-    int userId = prefs.getInt('userId') ?? 0;
-
-    final uri = Uri.parse('http://192.168.1.7:8000/api/add-animals');
+    final uri = Uri.parse('http://192.168.43.134:8000/api/add-animals');
     var request = http.MultipartRequest('POST', uri);
 
     // حقول النص
@@ -70,7 +66,6 @@ class _ShowDialoggState extends State<ShowDialogg> {
     request.fields['age'] = ageController.text;
     request.fields['date'] = dateController.text;
     request.fields['animal_type'] = selectedAnimalType ?? '';
-    request.fields['id_user'] = userId.toString();
 
     // صورة إذا موجودة
     if (_imageFile != null) {
@@ -85,6 +80,7 @@ class _ShowDialoggState extends State<ShowDialogg> {
     }
 
     try {
+      request.headers['Accept'] = 'application/json';
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
 
@@ -227,7 +223,7 @@ class _ShowDialoggState extends State<ShowDialogg> {
                           const SizedBox(width: 20),
                           ElevatedButton(
                             style: _buttonStyle(),
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () => Navigator.pop(context, true),
                             child: const Text("إغلاق"),
                           ),
                         ],

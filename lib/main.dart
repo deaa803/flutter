@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vetlink1/page-singup&in/login.dart';
 import 'package:vetlink1/store/main_page.dart';
 import 'package:vetlink1/serves/theme.dart';
@@ -8,8 +9,7 @@ import 'package:vetlink1/serves/noti_serves.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // تهيئة الإشعارات مع timezone داخل NotificationService
-  await NotificationService().init();
+  NotiServes().initNotification();
 
   final prefs = await SharedPreferences.getInstance();
   final isDarkMode = prefs.getBool('isDarkMode') ?? false;
@@ -53,6 +53,16 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ar', 'SY'), // العربية سوريا
+        // يمكن إضافة لغات أخرى هنا إذا أردت
+      ],
+      locale: const Locale('ar', 'SY'), // تعيين اللغة العربية كلغة افتراضية
       home:
           widget.isLoggedIn
               ? MainPage(onToggleTheme: toggleTheme, isDarkMode: _isDarkMode)
